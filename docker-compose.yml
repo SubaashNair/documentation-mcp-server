@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: documentation-mcp-server
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - API_KEY=${API_KEY}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - DOCUMENTATION_UPDATE_SCHEDULE=0 0 * * *
+      - LIBRARIES=react,vue,angular
+      - LOG_LEVEL=info
+    restart: unless-stopped
