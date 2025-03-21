@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentation MCP Server</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/styles/github.min.css">
+  <style>
+    :root {
+      --primary-color: #3498db;
+      --secondary-color: #2c3e50;
+      --accent-color: #e74c3c;
+      --light-bg: #f8f9fa;
+      --dark-bg: #343a40;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: var(--light-bg);
+    }
+    .navbar {
+      background-color: var(--secondary-color);
+    }
+    .navbar-brand {
+      font-weight: bold;
+      color: white !important;
+    }
+    .navbar-dark .navbar-nav .nav-link {
+      color: rgba(255, 255, 255, 0.8);
+    }
+    .navbar-dark .navbar-nav .nav-link:hover {
+      color: white;
+    }
+    .hero {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 4rem 0;
+      margin-bottom: 2rem;
+    }
+    .hero h1 {
+      font-size: 2.5rem;
+      font-weight: bold;
+    }
+    .card {
+      margin-bottom: 1.5rem;
+      border: none;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    .card-header {
+      background-color: var(--secondary-color);
+      color: white;
+      font-weight: bold;
+    }
+    .library-card .card-header {
+      background-color: var(--primary-color);
+    }
+    .feature-card .card-header {
+      background-color: var(--accent-color);
+    }
+    .btn-primary {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+    .btn-primary:hover {
+      background-color: #2980b9;
+      border-color: #2980b9;
+    }
+    .search-container {
+      margin: 2rem 0;
+    }
+    .search-input {
+      border-radius: 50px;
+      padding: 0.75rem 1.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .search-btn {
+      border-radius: 50px;
+      padding: 0.75rem 1.5rem;
+    }
+    footer {
+      background-color: var(--dark-bg);
+      color: white;
+      padding: 2rem 0;
+      margin-top: 3rem;
+    }
+    .component-list {
+      height: 300px;
+      overflow-y: auto;
+    }
+    .component-item {
+      padding: 0.5rem;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+    }
+    .component-item:hover {
+      background-color: #f5f5f5;
+    }
+    .component-details {
+      background-color: white;
+      padding: 1.5rem;
+      border-radius: 0.25rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    code {
+      background-color: #f8f9fa;
+      padding: 0.2rem 0.4rem;
+      border-radius: 0.25rem;
+      color: var(--accent-color);
+    }
+    pre {
+      background-color: #f8f9fa;
+      padding: 1rem;
+      border-radius: 0.25rem;
+      overflow-x: auto;
+    }
+    .loader {
+      display: inline-block;
+      width: 1rem;
+      height: 1rem;
+      border: 2px solid rgba(0, 0, 0, 0.1);
+      border-top-color: var(--primary-color);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+      <a class="navbar-brand" href="#">Documentation MCP Server</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link active" href="#">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#libraries">Libraries</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/api-docs">API Docs</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://github.com/SubaashNair/documentation-mcp-server" target="_blank">GitHub</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container text-center">
+      <h1>Find Documentation for Your Favorite Libraries</h1>
+      <p class="lead">Fast, up-to-date, and searchable documentation all in one place</p>
+      
+      <!-- Search Bar -->
+      <div class="row justify-content-center mt-4">
+        <div class="col-md-8">
+          <div class="input-group">
+            <input type="text" id="searchInput" class="form-control search-input" placeholder="Search for components, hooks, methods...">
+            <button class="btn btn-light search-btn" type="button" id="searchButton">
+              <i class="bi bi-search"></i> Search
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <div class="container">
+    <!-- Search Results -->
+    <div id="searchResults" class="mb-4" style="display: none;">
+      <h2>Search Results</h2>
+      <div id="resultsContainer" class="row"></div>
+    </div>
+
+    <!-- Libraries Section -->
+    <section id="libraries" class="mb-5">
+      <h2 class="mb-4">Available Libraries</h2>
+      <div class="row" id="librariesContainer">
+        <div class="col-md-4">
+          <div class="card library-card">
+            <div class="card-header">React</div>
+            <div class="card-body">
+              <p class="card-text">A JavaScript library for building user interfaces</p>
+              <div class="d-flex justify-content-between">
+                <span><strong>Latest:</strong> 18.2.0</span>
+                <a href="#" class="btn btn-sm btn-primary" data-library="react">Browse Docs</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-4">
+          <div class="card library-card">
+            <div class="card-header">Vue</div>
+            <div class="card-body">
+              <p class="card-text">Progressive JavaScript Framework</p>
+              <div class="d-flex justify-content-between">
+                <span><strong>Latest:</strong> 3.3.4</span>
+                <a href="#" class="btn btn-sm btn-primary" data-library="vue">Browse Docs</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-4">
+          <div class="card library-card">
+            <div class="card-header">Angular</div>
+            <div class="card-body">
+              <p class="card-text">Platform for building mobile and desktop web applications</p>
+              <div class="d-flex justify-content-between">
+                <span><strong>Latest:</strong> 16.1.0</span>
+                <a href="#" class="btn btn-sm btn-primary" data-library="angular">Browse Docs</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="mb-5">
+      <h2 class="mb-4">Features</h2>
+      <div class="row">
+        <div class="col-md-4">
+          <div class="card feature-card">
+            <div class="card-header">Up-to-Date Documentation</div>
+            <div class="card-body">
+              <p class="card-text">Documentation is automatically updated to ensure you have access to the latest information.</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-4">
+          <div class="card feature-card">
+            <div class="card-header">Fast Search</div>
+            <div class="card-body">
+              <p class="card-text">Quickly find what you need with our powerful search functionality across all libraries.</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-4">
+          <div class="card feature-card">
+            <div class="card-header">Version Support</div>
+            <div class="card-body">
+              <p class="card-text">Access documentation for different versions of libraries to support your specific needs.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Library Details Section (Hidden by default) -->
+    <section id="libraryDetails" style="display: none;">
+      <div class="row">
+        <div class="col-md-4">
+          <h3 id="libraryName">Library</h3>
+          <div class="card mb-3">
+            <div class="card-header">Components</div>
+            <div class="card-body p-0">
+              <div id="componentList" class="component-list"></div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="versionSelect" class="form-label">Version:</label>
+            <select id="versionSelect" class="form-select"></select>
+          </div>
+          <button id="backButton" class="btn btn-secondary">← Back to Libraries</button>
+        </div>
+        <div class="col-md-8">
+          <div id="componentDetails" class="component-details">
+            <p class="text-center text-muted">Select a component to view details</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <h5>Documentation MCP Server</h5>
+          <p>A server for developers to access updated documentation of their favorite libraries.</p>
+        </div>
+        <div class="col-md-3">
+          <h5>Links</h5>
+          <ul class="list-unstyled">
+            <li><a href="#" class="text-white">Home</a></li>
+            <li><a href="#libraries" class="text-white">Libraries</a></li>
+            <li><a href="/api-docs" class="text-white">API Docs</a></li>
+            <li><a href="https://github.com/SubaashNair/documentation-mcp-server" class="text-white" target="_blank">GitHub</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3">
+          <h5>API</h5>
+          <ul class="list-unstyled">
+            <li><a href="/api/libraries" class="text-white">Libraries API</a></li>
+            <li><a href="/api/search" class="text-white">Search API</a></li>
+            <li><a href="/api/status" class="text-white">Status API</a></li>
+          </ul>
+        </div>
+      </div>
+      <hr class="my-4 bg-light">
+      <div class="text-center">
+        <p>&copy; 2025 Documentation MCP Server. Licensed under MIT.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/highlight.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@10.0.0/marked.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // API base URL
+      const API_BASE_URL = '/api';
+      
+      // DOM elements
+      const searchInput = document.getElementById('searchInput');
+      const searchButton = document.getElementById('searchButton');
+      const searchResults = document.getElementById('searchResults');
+      const resultsContainer = document.getElementById('resultsContainer');
+      const librariesSection = document.getElementById('libraries');
+      const libraryDetails = document.getElementById('libraryDetails');
+      const libraryName = document.getElementById('libraryName');
+      const componentList = document.getElementById('componentList');
+      const componentDetails = document.getElementById('componentDetails');
+      const versionSelect = document.getElementById('versionSelect');
+      const backButton = document.getElementById('backButton');
+      
+      // Event listeners
+      searchButton.addEventListener('click', performSearch);
+      searchInput.addEventListener('keyup', function(event) {
+        if (event.key === 'Enter') {
+          performSearch();
+        }
+      });
+      
+      // Library browse buttons
+      document.querySelectorAll('[data-library]').forEach(button => {
+        button.addEventListener('click', function(e) {
+          e.preventDefault();
+          const library = this.getAttribute('data-library');
+          showLibraryDetails(library);
+        });
+      });
+      
+      // Back button
+      backButton.addEventListener('click', function() {
+        libraryDetails.style.display = 'none';
+        librariesSection.style.display = 'block';
+        searchResults.style.display = 'none';
+      });
+      
+      // Version select
+      versionSelect.addEventListener('change', function() {
+        const library = libraryName.textContent.toLowerCase();
+        const version = this.value;
+        loadComponents(library, version);
+      });
+      
+      // Search function
+      async function performSearch() {
+        const query = searchInput.value.trim();
+        
+        if (!query) {
+          return;
+        }
+        
+        // Show loading state
+        resultsContainer.innerHTML = '<div class="col-12 text-center"><div class="loader"></div> Searching...</div>';
+        searchResults.style.display = 'block';
+        librariesSection.style.display = 'none';
+        libraryDetails.style.display = 'none';
+        
+        try {
+          const response = await fetch(`${API_BASE_URL}/search?q=${encodeURIComponent(query)}`);
+          const data = await response.json();
+          
+          if (data.status === 'success') {
+            displaySearchResults(data.data.results);
+          } else {
+            throw new Error(data.message || 'Error performing search');
+          }
+        } catch (error) {
+          resultsContainer.innerHTML = `<div class="col-12 text-center text-danger">Error: ${error.message}</div>`;
+        }
+      }
+      
+      // Display search results
+      function displaySearchResults(results) {
+        if (results.length === 0) {
+          resultsContainer.innerHTML = '<div class="col-12 text-center">No results found</div>';
+          return;
+        }
+        
+        resultsContainer.innerHTML = '';
+        
+        results.forEach(result => {
+          const resultCard = document.createElement('div');
+          resultCard.className = 'col-md-6 mb-3';
+          resultCard.innerHTML = `
+            <div class="card">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <span>${result.name}</span>
+                <span class="badge bg-primary">${result.library}</span>
+              </div>
+              <div class="card-body">
+                <p class="card-text">${result.description || 'No description available'}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                  <small>Type: ${result.type}</small>
+                  <button class="btn btn-sm btn-primary view-component" 
+                    data-library="${result.library}" 
+                    data-component="${result.path}">
+                    View Details
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+          resultsContainer.appendChild(resultCard);
+        });
+        
+        // Add event listeners to view component buttons
+        document.querySelectorAll('.view-component').forEach(button => {
+          button.addEventListener('click', function() {
+            const library = this.getAttribute('data-library');
+            const component = this.getAttribute('data-component');
+            showLibraryDetails(library, component);
+          });
+        });
+      }
+      
+      // Show library details
+      async function showLibraryDetails(library, component = null) {
+        // Update library name
+        libraryName.textContent = library.charAt(0).toUpperCase() + library.slice(1);
+        
+        // Clear components and details
+        componentList.innerHTML = '<div class="text-center p-3"><div class="loader"></div> Loading components...</div>';
+        componentDetails.innerHTML = '<p class="text-center text-muted">Select a component to view details</p>';
+        
+        // Show library details section
+        librariesSection.style.display = 'none';
+        searchResults.style.display = 'none';
+        libraryDetails.style.display = 'block';
+        
+        try {
+          // Load library info
+          const libraryResponse = await fetch(`${API_BASE_URL}/libraries/${library}`);
+          const libraryData = await libraryResponse.json();
+          
+          if (libraryData.status === 'success') {
+            // Populate version select
+            versionSelect.innerHTML = '';
+            libraryData.data.library.versions.forEach(version => {
+              const option = document.createElement('option');
+              option.value = version;
+              option.textContent = version;
+              if (version === libraryData.data.library.latestVersion) {
+                option.selected = true;
+              }
+              versionSelect.appendChild(option);
+            });
+            
+            // Load components
+            await loadComponents(library, versionSelect.value);
+            
+            // If a specific component was requested, show it
+            if (component) {
+              loadComponentDetails(library, component, versionSelect.value);
+            }
+          } else {
+            throw new Error(libraryData.message || 'Error loading library');
+          }
+        } catch (error) {
+          componentList.innerHTML = `<div class="text-center p-3 text-danger">Error: ${error.message}</div>`;
+        }
+      }
+      
+      // Load components for a library and version
+      async function loadComponents(library, version) {
+        componentList.innerHTML = '<div class="text-center p-3"><div class="loader"></div> Loading components...</div>';
+        
+        try {
+          const response = await fetch(`${API_BASE_URL}/libraries/${library}/components?version=${version}`);
+          const data = await response.json();
+          
+          if (data.status === 'success') {
+            componentList.innerHTML = '';
+            
+            data.data.components.forEach(component => {
+              const componentItem = document.createElement('div');
+              componentItem.className = 'component-item';
+              componentItem.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center">
+                  <span>${component.name}</span>
+                  <small class="text-muted">${component.type}</small>
+                </div>
+              `;
+              componentItem.addEventListener('click', function() {
+                loadComponentDetails(library, component.path, version);
+                
+                // Highlight selected component
+                document.querySelectorAll('.component-item').forEach(item => {
+                  item.classList.remove('bg-light');
+                });
+                componentItem.classList.add('bg-light');
+              });
+              componentList.appendChild(componentItem);
+            });
+          } else {
+            throw new Error(data.message || 'Error loading components');
+          }
+        } catch (error) {
+          componentList.innerHTML = `<div class="text-center p-3 text-danger">Error: ${error.message}</div>`;
+        }
+      }
+      
+      // Load component details
+      async function loadComponentDetails(library, componentPath, version) {
+        componentDetails.innerHTML = '<div class="text-center"><div class="loader"></div> Loading component details...</div>';
+        
+        try {
+          const response = await fetch(`${API_BASE_URL}/libraries/${library}/components/${componentPath}?version=${version}`);
+          const data = await response.json();
+          
+          if (data.status === 'success') {
+            const component = data.data.component;
+            
+            let parameters = '<p>None</p>';
+            if (component.parameters && component.parameters.length > 0) {
+              parameters = '<ul>' + component.parameters.map(param => {
+                return `<li><strong>${param.name}</strong> ${param.optional ? '(optional)' : ''} - <span class="text-muted">${param.type}</span>: ${param.description}</li>`;
+              }).join('') + '</ul>';
+            }
+            
+            let returns = '<p>None</p>';
+            if (component.returns) {
+              returns = `<p><span class="text-muted">${component.returns.type}</span>: ${component.returns.description}</p>`;
+            }
+            
+            let related = '<p>None</p>';
+            if (component.related && component.related.length > 0) {
+              related = '<ul>' + component.related.map(rel => {
+                return `<li><a href="#" class="related-component" data-path="${rel}">${rel.split('/').pop()}</a></li>`;
+              }).join('') + '</ul>';
+            }
+            
+            componentDetails.innerHTML = `
+              <h3>${component.name}</h3>
+              <p class="text-muted">${component.path}</p>
+              <hr>
+              <div class="mb-4">
+                <h5>Description</h5>
+                <p>${component.description}</p>
+              </div>
+              
+              <div class="mb-4">
+                <h5>Example</h5>
+                <pre><code class="language-javascript">${component.example || 'No example available'}</code></pre>
+              </div>
+              
+              <div class="row mb-4">
+                <div class="col-md-6">
+                  <h5>Parameters</h5>
+                  ${parameters}
+                </div>
+                <div class="col-md-6">
+                  <h5>Returns</h5>
+                  ${returns}
+                </div>
+              </div>
+              
+              <div class="mb-4">
+                <h5>Related</h5>
+                ${related}
+              </div>
+            `;
+            
+            // Highlight code
+            document.querySelectorAll('pre code').forEach((block) => {
+              hljs.highlightElement(block);
+            });
+            
+            // Add event listeners for related components
+            document.querySelectorAll('.related-component').forEach(link => {
+              link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const path = this.getAttribute('data-path');
+                loadComponentDetails(library, path, version);
+              });
+            });
+          } else {
+            throw new Error(data.message || 'Error loading component details');
+          }
+        } catch (error) {
+          componentDetails.innerHTML = `<div class="text-center text-danger">Error: ${error.message}</div>`;
+        }
+      }
+    });
+  </script>
+</body>
+</html>
