@@ -1,0 +1,701 @@
+openapi: 3.0.0
+info:
+  title: Documentation MCP Server API
+  description: API for accessing library documentation
+  version: 1.0.0
+  contact:
+    email: support@example.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:3000/api
+    description: Local development server
+  - url: https://api.example.com/api
+    description: Production server
+
+tags:
+  - name: Libraries
+    description: Operations related to libraries
+  - name: Search
+    description: Operations related to searching documentation
+  - name: API
+    description: API status and actions
+
+paths:
+  /libraries:
+    get:
+      summary: Get all libraries
+      description: Returns a list of all libraries available in the system
+      tags:
+        - Libraries
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      libraries:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Library'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /libraries/{name}:
+    get:
+      summary: Get a specific library
+      description: Returns details of a specific library by name
+      tags:
+        - Libraries
+      parameters:
+        - name: name
+          in: path
+          required: true
+          description: Library name
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      library:
+                        $ref: '#/components/schemas/Library'
+        '404':
+          description: Library not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /libraries/{name}/versions:
+    get:
+      summary: Get all versions of a library
+      description: Returns a list of all versions available for a library
+      tags:
+        - Libraries
+      parameters:
+        - name: name
+          in: path
+          required: true
+          description: Library name
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      versions:
+                        type: array
+                        items:
+                          type: string
+                          example: "3.2.0"
+        '404':
+          description: Library not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /libraries/{name}/components:
+    get:
+      summary: Get all components of a library
+      description: Returns a list of all components available for a library
+      tags:
+        - Libraries
+      parameters:
+        - name: name
+          in: path
+          required: true
+          description: Library name
+          schema:
+            type: string
+        - name: version
+          in: query
+          required: false
+          description: Library version (optional, defaults to latest)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      components:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Component'
+        '404':
+          description: Library not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /libraries/{name}/components/{componentPath}:
+    get:
+      summary: Get documentation for a specific component
+      description: Returns detailed documentation for a specific component
+      tags:
+        - Libraries
+      parameters:
+        - name: name
+          in: path
+          required: true
+          description: Library name
+          schema:
+            type: string
+        - name: componentPath
+          in: path
+          required: true
+          description: Component path
+          schema:
+            type: string
+        - name: version
+          in: query
+          required: false
+          description: Library version (optional, defaults to latest)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      component:
+                        $ref: '#/components/schemas/ComponentDetail'
+        '404':
+          description: Component not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /search:
+    get:
+      summary: Search across all libraries
+      description: Returns search results from all libraries
+      tags:
+        - Search
+      parameters:
+        - name: q
+          in: query
+          required: true
+          description: Search query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          description: Maximum number of results to return (default 20)
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          required: false
+          description: Results offset for pagination (default 0)
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      query:
+                        type: string
+                        example: "useState"
+                      results:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/SearchResult'
+                      count:
+                        type: integer
+                        example: 5
+                      limit:
+                        type: integer
+                        example: 20
+                      offset:
+                        type: integer
+                        example: 0
+        '400':
+          description: Bad request (missing query parameter)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /search/{library}:
+    get:
+      summary: Search within a specific library
+      description: Returns search results from a specific library
+      tags:
+        - Search
+      parameters:
+        - name: library
+          in: path
+          required: true
+          description: Library name
+          schema:
+            type: string
+        - name: q
+          in: query
+          required: true
+          description: Search query
+          schema:
+            type: string
+        - name: version
+          in: query
+          required: false
+          description: Library version (optional, defaults to latest)
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          description: Maximum number of results to return (default 20)
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          required: false
+          description: Results offset for pagination (default 0)
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      library:
+                        type: string
+                        example: "react"
+                      version:
+                        type: string
+                        example: "18.2.0"
+                      query:
+                        type: string
+                        example: "useState"
+                      results:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/SearchResult'
+                      count:
+                        type: integer
+                        example: 3
+                      limit:
+                        type: integer
+                        example: 20
+                      offset:
+                        type: integer
+                        example: 0
+        '400':
+          description: Bad request (missing query parameter)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Library not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /search/popular/terms:
+    get:
+      summary: Get popular search terms
+      description: Returns a list of popular search terms
+      tags:
+        - Search
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          description: Maximum number of terms to return (default 10)
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      terms:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/PopularTerm'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /status:
+    get:
+      summary: Get API status
+      description: Returns API status and information
+      tags:
+        - API
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      version:
+                        type: string
+                        example: "1.0.0"
+                      name:
+                        type: string
+                        example: "documentation-mcp-server"
+                      description:
+                        type: string
+                        example: "API for accessing library documentation"
+                      uptime:
+                        type: number
+                        example: 3600
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: "2025-03-21T07:00:00.000Z"
+                      libraries:
+                        type: integer
+                        example: 3
+                      libraryNames:
+                        type: array
+                        items:
+                          type: string
+                        example: ["react", "vue", "angular"]
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /refresh:
+    post:
+      summary: Refresh documentation
+      description: Triggers a manual refresh of documentation
+      tags:
+        - API
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                libraries:
+                  type: array
+                  items:
+                    type: string
+                  description: Specific libraries to refresh (optional, defaults to all)
+                  example: ["react", "vue"]
+      responses:
+        '202':
+          description: Refresh accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: "Documentation refresh started"
+                  refreshing:
+                    type: string
+                    example: "react, vue"
+        '401':
+          description: Unauthorized (invalid API key)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+
+  schemas:
+    Library:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "react"
+        description:
+          type: string
+          example: "A JavaScript library for building user interfaces"
+        website:
+          type: string
+          example: "https://reactjs.org"
+        repository:
+          type: string
+          example: "https://github.com/facebook/react"
+        versions:
+          type: array
+          items:
+            type: string
+          example: ["18.2.0", "18.1.0", "17.0.2"]
+        latestVersion:
+          type: string
+          example: "18.2.0"
+
+    Component:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "useState"
+        type:
+          type: string
+          example: "hook"
+        path:
+          type: string
+          example: "hooks/useState"
+
+    ComponentDetail:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "useState"
+        path:
+          type: string
+          example: "hooks/useState"
+        library:
+          type: string
+          example: "react"
+        version:
+          type: string
+          example: "18.2.0"
+        type:
+          type: string
+          example: "hook"
+        description:
+          type: string
+          example: "Returns a stateful value, and a function to update it."
+        example:
+          type: string
+          example: "const [count, setCount] = useState(0);"
+        parameters:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: "initialState"
+              type:
+                type: string
+                example: "any"
+              description:
+                type: string
+                example: "The initial state value"
+              optional:
+                type: boolean
+                example: false
+        returns:
+          type: object
+          properties:
+            type:
+              type: string
+              example: "array"
+            description:
+              type: string
+              example: "An array with two items: the current state and a function to update it"
+        related:
+          type: array
+          items:
+            type: string
+          example: ["useReducer", "useContext"]
+
+    SearchResult:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "useState"
+        path:
+          type: string
+          example: "hooks/useState"
+        type:
+          type: string
+          example: "hook"
+        description:
+          type: string
+          example: "Returns a stateful value, and a function to update it."
+        score:
+          type: number
+          example: 0.75
+        matches:
+          type: object
+          example: { "name": { "useState": {} } }
+
+    PopularTerm:
+      type: object
+      properties:
+        term:
+          type: string
+          example: "useState"
+        count:
+          type: integer
+          example: 42
+        lastSearched:
+          type: string
+          format: date-time
+          example: "2025-03-21T06:30:15.000Z"
+
+    Error:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "error"
+        message:
+          type: string
+          example: "Something went wrong!"
+        error:
+          type: string
+          example: "Error details (only in development mode)"
